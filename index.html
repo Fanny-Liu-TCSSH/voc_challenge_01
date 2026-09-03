@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>L01 Firsts in Life 單字複習多巴胺挑戰</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            dopa: {
+              yellow: '#FFE600',
+              pink: '#FF3388',
+              cyan: '#00F0FF',
+              purple: '#8B3AEE',
+              green: '#10B981',
+              lightGreen: '#34D399',
+              orange: '#FF7A00',
+              bg: '#FFFDF0',
+            }
+          },
+          boxShadow: {
+            'neo': '4px 4px 0px 0px #1E1E1E',
+            'neo-sm': '2px 2px 0px 0px #1E1E1E',
+            'neo-lg': '6px 6px 0px 0px #1E1E1E',
+            'neo-press': '1px 1px 0px 0px #1E1E1E',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap');
+    
+    body {
+      font-family: 'Fredoka', 'Noto Sans TC', sans-serif;
+      background-color: #FFFDF0;
+      background-image: radial-gradient(#FBCFE8 1.5px, transparent 1.5px), radial-gradient(#FEF08A 1.5px, #FFFDF0 1.5px);
+      background-size: 30px 30px;
+      background-position: 0 0, 15px 15px;
+    }
+
+    .neo-card {
+      border: 3px solid #18181B;
+      box-shadow: 4px 4px 0px 0px #18181B;
+      transition: all 0.15s ease-in-out;
+    }
+
+    .neo-card-sm {
+      border: 2px solid #18181B;
+      box-shadow: 2px 2px 0px 0px #18181B;
+      transition: all 0.15s ease-in-out;
+    }
+
+    .neo-btn {
+      border: 3px solid #18181B;
+      box-shadow: 4px 4px 0px 0px #18181B;
+      transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .neo-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px 0px #18181B;
+    }
+    .neo-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px 0px #18181B;
+    }
+
+    /* 卡片配對抖動動畫 */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+    .animate-shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    /* 彈跳成功 */
+    @keyframes bounce-success {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+    .animate-success {
+      animation: bounce-success 0.35s ease-out;
+    }
+
+    /* 獎狀列印樣式 */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #certificate-area, #certificate-area * {
+        visibility: visible;
+      }
+      #certificate-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 20px;
+        box-shadow: none !important;
+        border: 4px solid #000 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen text-zinc-900 pb-12 flex flex-col items-center">
+
+  <!-- ================= 頂部導航狀態列 ================= -->
+  <header class="w-full max-w-4xl px-3 pt-3 pb-2 sticky top-0 z-40 bg-[#FFFDF0]/90 backdrop-blur-md">
+    <div class="neo-card bg-white rounded-2xl px-3 sm:px-4 py-2.5 flex flex-wrap items-center justify-between gap-2">
+      <!-- 標題與標籤 -->
+      <div class="flex items-center gap-2 cursor-pointer" onclick="showView('hub')">
+        <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-dopa-yellow border-2 border-zinc-900 flex items-center justify-center text-xl shadow-neo-sm font-black">
+          ⚡
+        </span>
+        <div>
+          <h1 class="font-black text-sm sm:text-base leading-tight tracking-tight">L01 Firsts in Life</h1>
+          <span class="inline-block text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded-full bg-dopa-pink text-white border border-zinc-900">
+            多巴胺單字大冒險
+          </span>
+        </div>
+      </div>
+
+      <!-- 學生資訊標籤與徽章進度 -->
+      <div class="flex items-center gap-2">
+        <!-- 學生資料顯示 -->
+        <div id="nav-student-pill" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-violet-100 border-2 border-zinc-900 rounded-xl text-xs font-bold shadow-neo-sm">
+          <span class="text-sm">👤</span>
+          <span id="nav-student-name">未登錄</span>
+          <button onclick="editStudentInfo()" class="text-[10px] text-zinc-500 hover:text-dopa-pink underline ml-1">修改</button>
+        </div>
+
+        <!-- 3 個徽章進度槽 -->
+        <div class="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-xl border-2 border-zinc-900 shadow-neo-sm">
+          <div id="badge-icon-1" title="關卡1徽章: 閃電記憶王" class="w-7 h-7 rounded-lg border-2 border-zinc-300 bg-zinc-100 flex items-center justify-center text-sm grayscale opacity-50 transition-all">
+            ⚡
+          </div>
+          <div id="badge-icon-2" title="關卡2徽章: 搭配詞大偵探" class="w-7 h-7 rounded-lg border-2 border-zinc-300 bg-zinc-100 flex items-center justify-center text-sm grayscale opacity-50 transition-all">
+            💡
+          </div>
+          <div id="badge-icon-3" title="關卡3徽章: 中英轉換霸主" class="w-7 h-7 rounded-lg border-2 border-zinc-300 bg-zinc-100 flex items-center justify-center text-sm grayscale opacity-50 transition-all">
+            🎯
+          </div>
+        </div>
+
+        <!-- 音效開關 -->
+        <button id="audio-toggle" onclick="toggleSound()" class="w-8 h-8 rounded-xl border-2 border-zinc-900 bg-emerald-200 flex items-center justify-center text-sm shadow-neo-sm active:scale-95" title="音效切換">
+          🔊
+        </button>
+      </div>
+    </div>
+
+    <!-- 導航選單按鈕列 -->
+    <nav class="flex items-center justify-between sm:justify-start gap-1.5 mt-2 overflow-x-auto pb-1 text-xs font-black">
+      <button onclick="showView('hub')" id="btn-nav-hub" class="neo-btn bg-white hover:bg-yellow-100 px-3 py-1.5 rounded-xl flex items-center gap-1 whitespace-nowrap">
+        🏠 冒險大廳
+      </button>
+      <button onclick="enterLevel(1)" id="btn-nav-lvl1" class="neo-btn bg-white hover:bg-yellow-200 px-2.5 py-1.5 rounded-xl flex items-center gap-1 whitespace-nowrap">
+        1. 閃電配配看 ⚡
+      </button>
+      <button onclick="enterLevel(2)" id="btn-nav-lvl2" class="neo-btn bg-white hover:bg-purple-200 px-2.5 py-1.5 rounded-xl flex items-center gap-1 whitespace-nowrap">
+        2. 搭配詞問答 💡
+      </button>
+      <button onclick="enterLevel(3)" id="btn-nav-lvl3" class="neo-btn bg-white hover:bg-pink-200 px-2.5 py-1.5 rounded-xl flex items-center gap-1 whitespace-nowrap">
+        3. 看中選英 🎯
+      </button>
+      <button onclick="showView('cert')" id="btn-nav-cert" class="neo-btn bg-amber-300 hover:bg-amber-400 px-2.5 py-1.5 rounded-xl flex items-center gap-1 whitespace-nowrap">
+        🏆 闖關證書
+      </button>
+    </nav>
+  </header>
+
+  <!-- 主內容容器 -->
+  <main class="w-full max-w-4xl px-3 mt-1 flex-1 flex flex-col items-center">
+
+    <!-- ================= VIEW 0: 入口大廳 / 學生登記 & 關卡自由選 ================= -->
+    <section id="view-hub" class="w-full flex flex-col items-center gap-4">
+      
+      <!-- 學生身份登記卡片 -->
+      <div id="student-login-card" class="w-full max-w-xl neo-card bg-dopa-yellow/90 p-4 sm:p-5 rounded-3xl">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🎒</span>
+            <h2 class="text-base sm:text-lg font-black tracking-wide">冒險者資料登錄</h2>
+          </div>
+          <span class="text-xs bg-black text-white px-2 py-0.5 rounded-full font-bold">必填欄位</span>
+        </div>
+        <p class="text-xs text-zinc-700 font-semibold mb-3">
+          請先輸入你的班級、座號與姓名，收集完 3 枚徽章後將自動頒發正式榮譽證書！
+        </p>
+        
+        <form id="student-form" onsubmit="saveStudentInfo(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <div>
+            <label class="block text-xs font-black text-zinc-800 mb-1">班級 (Class)</label>
+            <input type="text" id="input-class" required placeholder="例: 101" 
+                   class="w-full px-3 py-2 text-sm font-bold border-2 border-zinc-900 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-black">
+          </div>
+          <div>
+            <label class="block text-xs font-black text-zinc-800 mb-1">座號 (Seat No.)</label>
+            <input type="number" id="input-seat" required placeholder="例: 18" min="1" max="99" 
+                   class="w-full px-3 py-2 text-sm font-bold border-2 border-zinc-900 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-black">
+          </div>
+          <div>
+            <label class="block text-xs font-black text-zinc-800 mb-1">姓名 (Name)</label>
+            <input type="text" id="input-name" required placeholder="例: 王小明" 
+                   class="w-full px-3 py-2 text-sm font-bold border-2 border-zinc-900 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-black">
+          </div>
+          <div class="sm:col-span-3 mt-1">
+            <button type="submit" class="w-full neo-btn bg-zinc-900 text-white hover:bg-zinc-800 font-black py-2.5 rounded-xl text-sm flex items-center justify-center gap-2">
+              <span>儲存冒險身份，開始出發！</span>
+              <span class="text-base">🚀</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- 登錄完成提示列 -->
+        <div id="login-confirmed-box" class="hidden mt-2 p-2.5 bg-emerald-100 border-2 border-emerald-600 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-emerald-700 font-black text-sm">✅ 已登錄身份：</span>
+            <span id="display-registered-info" class="font-bold text-sm text-emerald-900"></span>
+          </div>
+          <button type="button" onclick="editStudentInfo()" class="text-xs bg-white border border-emerald-700 px-2 py-1 rounded-lg font-bold hover:bg-emerald-50">
+            重新修改
+          </button>
+        </div>
+      </div>
+
+      <!-- 關卡選擇卡片區 (3大關卡自由選) -->
+      <div class="w-full max-w-2xl">
+        <div class="flex items-center justify-between mb-2.5">
+          <h3 class="font-black text-sm sm:text-base flex items-center gap-2">
+            <span>🗺️</span> 挑選挑戰關卡 (可自由切換順序)
+          </h3>
+          <span class="text-xs font-bold text-zinc-500" id="hub-badges-count">已收集：0 / 3 徽章</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          
+          <!-- 關卡 1 卡片 -->
+          <div onclick="enterLevel(1)" class="neo-btn bg-white hover:bg-yellow-50 p-3.5 rounded-2xl flex flex-col justify-between cursor-pointer border-3 border-zinc-900 relative group text-left">
+            <div class="absolute -top-2.5 -right-2 bg-dopa-yellow border-2 border-zinc-900 rounded-full px-2 py-0.5 text-[10px] font-black shadow-neo-sm">
+              <span id="hub-badge-status-1">未通關 🔒</span>
+            </div>
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-amber-300 border-2 border-zinc-900 flex items-center justify-center text-xl mb-2">
+                ⚡
+              </div>
+              <h4 class="font-black text-sm sm:text-base leading-tight">關卡 1：閃電配配看</h4>
+              <p class="text-[11px] font-bold text-zinc-500 mt-1">
+                4×4 矩陣挑戰！單字與中文釋義 50 秒極速消消樂，共 3 回合。
+              </p>
+            </div>
+            <div class="mt-3 pt-2 border-t border-dashed border-zinc-300 flex items-center justify-between text-xs font-black text-amber-600 group-hover:translate-x-1 transition-transform">
+              <span>立即挑戰</span>
+              <span>➔</span>
+            </div>
+          </div>
+
+          <!-- 關卡 2 卡片 -->
+          <div onclick="enterLevel(2)" class="neo-btn bg-white hover:bg-purple-50 p-3.5 rounded-2xl flex flex-col justify-between cursor-pointer border-3 border-zinc-900 relative group text-left">
+            <div class="absolute -top-2.5 -right-2 bg-purple-300 border-2 border-zinc-900 rounded-full px-2 py-0.5 text-[10px] font-black shadow-neo-sm">
+              <span id="hub-badge-status-2">未通關 🔒</span>
+            </div>
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-purple-300 border-2 border-zinc-900 flex items-center justify-center text-xl mb-2">
+                💡
+              </div>
+              <h4 class="font-black text-sm sm:text-base leading-tight">關卡 2：搭配詞大偵探</h4>
+              <p class="text-[11px] font-bold text-zinc-500 mt-1">
+                考驗詞類變化與核心搭配詞用法！答對 8 題即可獲得徽章。
+              </p>
+            </div>
+            <div class="mt-3 pt-2 border-t border-dashed border-zinc-300 flex items-center justify-between text-xs font-black text-purple-600 group-hover:translate-x-1 transition-transform">
+              <span>立即挑戰</span>
+              <span>➔</span>
+            </div>
+          </div>
+
+          <!-- 關卡 3 卡片 -->
+          <div onclick="enterLevel(3)" class="neo-btn bg-white hover:bg-pink-50 p-3.5 rounded-2xl flex flex-col justify-between cursor-pointer border-3 border-zinc-900 relative group text-left">
+            <div class="absolute -top-2.5 -right-2 bg-dopa-pink text-white border-2 border-zinc-900 rounded-full px-2 py-0.5 text-[10px] font-black shadow-neo-sm">
+              <span id="hub-badge-status-3">未通關 🔒</span>
+            </div>
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-pink-300 border-2 border-zinc-900 flex items-center justify-center text-xl mb-2">
+                🎯
+              </div>
+              <h4 class="font-black text-sm sm:text-base leading-tight">關卡 3：看中選英</h4>
+              <p class="text-[11px] font-bold text-zinc-500 mt-1">
+                精準辨析！5題核心單字＋5題課文搭配片語，四選一極速測驗。
+              </p>
+            </div>
+            <div class="mt-3 pt-2 border-t border-dashed border-zinc-300 flex items-center justify-between text-xs font-black text-pink-600 group-hover:translate-x-1 transition-transform">
+              <span>立即挑戰</span>
+              <span>➔</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 前往獎狀捷徑條 -->
+        <div class="mt-4 p-3 bg-white neo-card rounded-2xl flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🏆</span>
+            <div>
+              <div class="text-xs font-black">集滿 3 枚徽章解鎖證書</div>
+              <div class="text-[11px] text-zinc-500 font-bold">完成所有挑戰即可列印個人榮譽獎狀</div>
+            </div>
+          </div>
+          <button onclick="showView('cert')" class="neo-btn bg-amber-300 text-xs font-black px-3 py-1.5 rounded-xl">
+            查看證書
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================= VIEW 1: 關卡一 4x4 閃電連連看 ================= -->
+    <section id="view-level-1" class="w-full max-w-xl hidden flex-col items-center">
+      
+      <!-- 關卡頂部控制資訊 (回合、倒數50秒、回大廳) -->
+      <div class="w-full neo-card bg-white p-2.5 sm:p-3 rounded-2xl mb-2.5 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <button onclick="showView('hub')" class="neo-btn bg-zinc-100 hover:bg-zinc-200 text-xs font-black px-2.5 py-1 rounded-xl flex items-center gap-1">
+            🏠 首頁大廳
+          </button>
+          <div class="font-black text-xs sm:text-sm bg-yellow-200 px-2 py-0.5 rounded-lg border border-zinc-900">
+            ROUND <span id="game1-round">1</span> / 3
+          </div>
+        </div>
+
+        <!-- 50秒計時器與進度條 -->
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1">
+            <span class="text-sm">⏱️</span>
+            <span id="game1-timer" class="font-black text-sm sm:text-base text-rose-600 w-10 text-right">50 秒</span>
+          </div>
+          <button onclick="restartLevel1()" class="neo-btn bg-zinc-100 text-xs font-bold p-1 rounded-lg" title="重新開始此回合">
+            🔄
+          </button>
+        </div>
+      </div>
+
+      <!-- 倒數時間進度條 -->
+      <div class="w-full bg-zinc-200 h-2.5 rounded-full border-2 border-zinc-900 overflow-hidden mb-2.5 shadow-neo-sm">
+        <div id="game1-progress-bar" class="bg-dopa-pink h-full w-full transition-all duration-1000 ease-linear"></div>
+      </div>
+
+      <!-- 4x4 配對卡片網格 (針對手機直向特別優化高度與文字) -->
+      <div id="game1-grid" class="w-full grid grid-cols-4 gap-1.5 sm:gap-2.5 aspect-[4/3.8] sm:aspect-[4/3] max-h-[68vh]">
+        <!-- 卡片由 JavaScript 動態生成 -->
+      </div>
+
+      <!-- 底部提示文字 -->
+      <div class="w-full flex items-center justify-between text-[11px] font-bold text-zinc-600 mt-2 px-1">
+        <span>💡 規則：點擊英文與對應中文配對，成功將轉為亮綠色！</span>
+        <span id="game1-matched-counter">配對進度: 0 / 8 對</span>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 2: 關卡二 衍生字及搭配詞問答 ================= -->
+    <section id="view-level-2" class="w-full max-w-xl hidden flex-col items-center">
+      
+      <!-- 控制列 -->
+      <div class="w-full neo-card bg-white p-2.5 sm:p-3 rounded-2xl mb-3 flex items-center justify-between">
+        <button onclick="showView('hub')" class="neo-btn bg-zinc-100 hover:bg-zinc-200 text-xs font-black px-2.5 py-1 rounded-xl flex items-center gap-1">
+          🏠 首頁大廳
+        </button>
+        <div class="font-black text-xs sm:text-sm bg-purple-200 px-3 py-1 rounded-xl border border-zinc-900">
+          題目 <span id="q2-current-num">1</span> / 10
+        </div>
+        <div class="text-xs font-bold text-zinc-600">
+          得分: <span id="q2-score" class="font-black text-purple-600 text-sm">0</span>
+        </div>
+      </div>
+
+      <!-- 題目卡片 -->
+      <div class="w-full neo-card bg-white p-4 sm:p-5 rounded-3xl mb-3">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-black px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 border border-purple-300">
+            L01 搭配詞與衍生字偵探
+          </span>
+          <span id="q2-badge-tip" class="text-[11px] font-bold text-zinc-500">答對 8 題領徽章</span>
+        </div>
+        <h3 id="q2-question-text" class="text-sm sm:text-base font-black text-zinc-800 my-2 leading-relaxed min-h-[50px]">
+          題目加載中...
+        </h3>
+        
+        <!-- 選項列表 -->
+        <div id="q2-options-container" class="grid grid-cols-1 gap-2 mt-3">
+          <!-- 選項按鈕由 JS 生成 -->
+        </div>
+
+        <!-- 答題後解析反饋框 -->
+        <div id="q2-feedback-box" class="hidden mt-3 p-3 rounded-xl border-2 border-zinc-900 text-xs font-bold transition-all">
+          <div id="q2-feedback-title" class="font-black text-sm mb-1"></div>
+          <div id="q2-feedback-detail" class="text-zinc-700"></div>
+          <button id="q2-next-btn" onclick="nextQuestionLevel2()" class="mt-2.5 w-full neo-btn bg-zinc-900 text-white py-2 rounded-xl text-xs font-black hover:bg-zinc-800">
+            下一題 ➔
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================= VIEW 3: 關卡三 看中選英 ================= -->
+    <section id="view-level-3" class="w-full max-w-xl hidden flex-col items-center">
+      
+      <!-- 控制列 -->
+      <div class="w-full neo-card bg-white p-2.5 sm:p-3 rounded-2xl mb-3 flex items-center justify-between">
+        <button onclick="showView('hub')" class="neo-btn bg-zinc-100 hover:bg-zinc-200 text-xs font-black px-2.5 py-1 rounded-xl flex items-center gap-1">
+          🏠 首頁大廳
+        </button>
+        <div class="font-black text-xs sm:text-sm bg-pink-200 px-3 py-1 rounded-xl border border-zinc-900">
+          題目 <span id="q3-current-num">1</span> / 10
+        </div>
+        <div class="text-xs font-bold text-zinc-600">
+          得分: <span id="q3-score" class="font-black text-pink-600 text-sm">0</span>
+        </div>
+      </div>
+
+      <!-- 題目卡片 -->
+      <div class="w-full neo-card bg-white p-4 sm:p-5 rounded-3xl mb-3">
+        <div class="flex items-center justify-between mb-2">
+          <span id="q3-type-tag" class="text-xs font-black px-2 py-0.5 rounded-full bg-pink-100 text-pink-800 border border-pink-300">
+            核心單字
+          </span>
+          <span class="text-[11px] font-bold text-zinc-500">答對 8 題領徽章</span>
+        </div>
+
+        <div class="my-3 py-2 bg-pink-50/50 rounded-2xl border-2 border-dashed border-pink-300 text-center">
+          <span class="text-xs font-bold text-zinc-500">請選出對應的英文：</span>
+          <h3 id="q3-prompt-text" class="text-lg sm:text-xl font-black text-zinc-900 mt-1">
+            中文提示加載中
+          </h3>
+        </div>
+        
+        <!-- 選項列表 (4選1) -->
+        <div id="q3-options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
+          <!-- 選項按鈕由 JS 生成 -->
+        </div>
+
+        <!-- 答題後解析反饋框 -->
+        <div id="q3-feedback-box" class="hidden mt-3 p-3 rounded-xl border-2 border-zinc-900 text-xs font-bold transition-all">
+          <div id="q3-feedback-title" class="font-black text-sm mb-1"></div>
+          <div id="q3-feedback-detail" class="text-zinc-700"></div>
+          <button id="q3-next-btn" onclick="nextQuestionLevel3()" class="mt-2.5 w-full neo-btn bg-zinc-900 text-white py-2 rounded-xl text-xs font-black hover:bg-zinc-800">
+            下一題 ➔
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================= VIEW 4: 證書頁面 ================= -->
+    <section id="view-cert" class="w-full max-w-xl hidden flex-col items-center">
+      
+      <!-- 證書本體 -->
+      <div id="certificate-area" class="w-full neo-card bg-[#FFFDF5] p-5 sm:p-7 rounded-3xl border-4 border-zinc-900 relative overflow-hidden text-center shadow-neo-lg">
+        
+        <!-- 裝飾背景印記 -->
+        <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-amber-200/40 rounded-full pointer-events-none"></div>
+        <div class="absolute -left-8 -top-8 w-32 h-32 bg-pink-200/40 rounded-full pointer-events-none"></div>
+
+        <div class="inline-block bg-dopa-yellow border-2 border-zinc-900 px-3 py-1 rounded-full text-xs font-black mb-3 shadow-neo-sm">
+          🌟 CERTIFICATE OF ACHIEVEMENT 🌟
+        </div>
+
+        <h2 class="text-xl sm:text-2xl font-black text-zinc-900 tracking-wide mb-1">
+          高中英文單字大冒險・闖關榮譽證書
+        </h2>
+        <p class="text-xs text-zinc-500 font-bold mb-4">Book 1 Lesson 1: Firsts in Life</p>
+
+        <!-- 獲獎學生資訊 -->
+        <div class="my-4 py-3 px-4 bg-white border-2 border-zinc-900 rounded-2xl shadow-neo-sm inline-block max-w-md w-full">
+          <div class="text-xs text-zinc-500 font-bold mb-1">茲證明優秀冒險者</div>
+          <div class="text-lg sm:text-xl font-black text-zinc-900 flex items-center justify-center gap-3">
+            <span id="cert-class-display" class="border-b-2 border-zinc-900 pb-0.5">高一甲班</span>
+            <span id="cert-seat-display" class="border-b-2 border-zinc-900 pb-0.5">01 號</span>
+            <span id="cert-name-display" class="border-b-2 border-zinc-900 pb-0.5 text-dopa-pink">林大寶</span>
+          </div>
+          <p class="text-xs font-bold text-zinc-700 mt-2 leading-relaxed">
+            成功突破三道多巴胺極限關卡，精熟本課核心單字、詞類變化及重要搭配詞，展現卓越之英語學習專注力與實力，特頒此證！
+          </p>
+        </div>
+
+        <!-- 徽章收集展示區 -->
+        <div class="grid grid-cols-3 gap-2 my-4">
+          <div id="cert-badge-1" class="p-2 rounded-xl border-2 border-zinc-900 bg-yellow-100 flex flex-col items-center">
+            <span class="text-2xl">⚡</span>
+            <span class="text-[11px] font-black mt-1">閃電記憶王</span>
+            <span class="text-[9px] text-zinc-600 font-bold">4×4 50秒消消樂</span>
+          </div>
+          <div id="cert-badge-2" class="p-2 rounded-xl border-2 border-zinc-900 bg-purple-100 flex flex-col items-center">
+            <span class="text-2xl">💡</span>
+            <span class="text-[11px] font-black mt-1">搭配詞偵探</span>
+            <span class="text-[9px] text-zinc-600 font-bold">詞類與句意精熟</span>
+          </div>
+          <div id="cert-badge-3" class="p-2 rounded-xl border-2 border-zinc-900 bg-pink-100 flex flex-col items-center">
+            <span class="text-2xl">🎯</span>
+            <span class="text-[11px] font-black mt-1">看中選英霸主</span>
+            <span class="text-[9px] text-zinc-600 font-bold">單字片語速選</span>
+          </div>
+        </div>
+
+        <!-- 日期與認證章 -->
+        <div class="mt-4 pt-3 border-t-2 border-dashed border-zinc-300 flex items-center justify-between text-xs font-bold text-zinc-600 px-2">
+          <div>頒發日期：<span id="cert-date">2026/09/03</span></div>
+          <div class="flex items-center gap-1 font-black text-zinc-800">
+            <span>認證標章：</span>
+            <span class="w-6 h-6 rounded-full bg-dopa-pink text-white flex items-center justify-center text-xs">✔</span>
+            <span>PASS</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 操作按鈕 (不列印) -->
+      <div class="no-print w-full flex flex-wrap items-center justify-center gap-2 mt-4">
+        <button onclick="window.print()" class="neo-btn bg-emerald-300 hover:bg-emerald-400 font-black px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-neo">
+          <span>🖨️ 列印 / 另存為 PDF 證書</span>
+        </button>
+        <button onclick="showView('hub')" class="neo-btn bg-white hover:bg-zinc-100 font-black px-4 py-2 rounded-xl text-xs flex items-center gap-1 shadow-neo">
+          <span>🏠 回到冒險大廳</span>
+        </button>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ================= 模態彈窗 (過關 / 失敗 / 提示) ================= -->
+  <div id="game-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
+    <div class="neo-card bg-white max-w-sm w-full p-5 rounded-3xl text-center shadow-neo-lg">
+      <div id="modal-icon" class="text-4xl mb-2">🎉</div>
+      <h3 id="modal-title" class="text-lg font-black mb-1">恭喜過關！</h3>
+      <p id="modal-desc" class="text-xs font-bold text-zinc-600 mb-4">你已成功完成挑戰！</p>
+      
+      <div id="modal-actions" class="flex flex-col gap-2">
+        <button id="modal-primary-btn" class="neo-btn bg-dopa-yellow font-black py-2 rounded-xl text-xs w-full">
+          確認
+        </button>
+        <button id="modal-secondary-btn" class="neo-btn bg-zinc-100 hover:bg-zinc-200 font-bold py-2 rounded-xl text-xs w-full">
+          關閉
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 遊戲核心邏輯腳本 ================= -->
+  <script>
+    /* ================= 1. 全局狀態與資料庫 ================= */
+    const state = {
+      soundEnabled: true,
+      student: {
+        className: '',
+        seatNumber: '',
+        name: '',
+        isRegistered: false,
+      },
+      badges: {
+        1: false, // 關卡1: 閃電配配看
+        2: false, // 關卡2: 搭配詞大偵探
+        3: false, // 關卡3: 看中選英霸主
+      },
+      // 關卡 1 狀態
+      level1: {
+        currentRound: 1, // 1, 2, 3
+        timeLeft: 50,    // 50秒
+        timerId: null,
+        firstCard: null,
+        lockBoard: false,
+        matchedPairs: 0,
+        totalPairs: 8,
+      },
+      // 關卡 2 狀態
+      level2: {
+        currentIndex: 0,
+        score: 0,
+        answered: false,
+      },
+      // 關卡 3 狀態
+      level3: {
+        currentIndex: 0,
+        score: 0,
+        answered: false,
+      }
+    };
+
+    // 關卡 1 配對題庫（共 3 回合，每回合 8 對 = 16 張卡片）
+    // Round 1: 完全對標截圖手冊題目
+    const MATCH_ROUNDS = [
+      // Round 1 (手冊圖片 8 組單字/釋義)
+      [
+        { en: "ruin", zh: "破壞；毀壞" },
+        { en: "embarrass", zh: "使尷尬；使難堪" },
+        { en: "upset", zh: "使難過；沮喪的" },
+        { en: "depressed", zh: "沮喪的；消沉的" },
+        { en: "yell", zh: "大喊；大吼" },
+        { en: "embarrassment", zh: "尷尬；難堪" },
+        { en: "reflect", zh: "沉思；映出" },
+        { en: "recall", zh: "記起；回想起" }
+      ],
+      // Round 2 (L01 精選核心單字)
+      [
+        { en: "memorable", zh: "難忘的；值得紀念的" },
+        { en: "memorize", zh: "記住；背熟" },
+        { en: "failure", zh: "失敗" },
+        { en: "presentation", zh: "報告；演講" },
+        { en: "skip", zh: "跳過；缺課" },
+        { en: "remind", zh: "提醒；使想起" },
+        { en: "traditional", zh: "傳統的" },
+        { en: "fortunately", zh: "幸運地" }
+      ],
+      // Round 3 (L01 重點搭配詞片語)
+      [
+        { en: "in person", zh: "親自；面對面" },
+        { en: "take seriously", zh: "認真看待" },
+        { en: "let down", zh: "讓……失望" },
+        { en: "make sure", zh: "確定；確保" },
+        { en: "put first", zh: "認為……最重要" },
+        { en: "dress up", zh: "裝扮；精心打扮" },
+        { en: "the rest of", zh: "其餘的……" },
+        { en: "fall into ruin", zh: "淪為廢墟" }
+      ]
+    ];
+
+    // 關卡 2 衍生字與搭配詞題目（10 題）
+    const LEVEL2_QUESTIONS = [
+      {
+        q: "1. 請問動詞「depress (使沮喪)」的名詞形式是下列哪一個？",
+        options: ["depression", "depressed", "depressive", "depressment"],
+        ans: 0,
+        explain: "depress 的名詞為 depression [C, U] 意為「沮喪；消沉；憂鬱症」。"
+      },
+      {
+        q: "2. 請問名詞「memory (記憶；回憶)」的動詞形式（記憶；記住）是哪一個？",
+        options: ["memorize", "memorial", "rememberly", "memorable"],
+        ans: 0,
+        explain: "memorize 是及物動詞，意為「記憶；記住」。"
+      },
+      {
+        q: "3. 閱讀例句：「This trip made our vacation truly memorable.」這句話的意思是？",
+        options: [
+          "這次旅行讓我們必須記住很多事情。",
+          "這趟旅行讓我們的假期實在令人難忘。",
+          "這趟旅行充滿了許多失敗的經歷。",
+          "我們在假期中親自去了很多傳統景點。"
+        ],
+        ans: 1,
+        explain: "memorable 為形容詞，意為「難忘的；值得紀念的 (worth remembering)」。"
+      },
+      {
+        q: "4. 下列哪一個片語的意思是「喚起童年回憶」？",
+        options: [
+          "bring back childhood memories",
+          "memorize childhood stories",
+          "keep good memory of childhood",
+          "reflect childhood in the mirror"
+        ],
+        ans: 0,
+        explain: "bring back memories 表示「喚起……的回憶」。"
+      },
+      {
+        q: "5. 若要表達「發表一份關於 AI 人工智慧的報告」，應該使用哪一個搭配詞？",
+        options: [
+          "make a presentation to AI",
+          "give a presentation on AI",
+          "take a presentation for AI",
+          "recall a presentation about AI"
+        ],
+        ans: 1,
+        explain: "give a presentation on sth. 為固定搭配詞，意為「就某主題進行簡報／發表報告」。"
+      },
+      {
+        q: "6. 當想表達「認真思考、反省發生的事情」時，動詞 reflect 後面通常接哪一個介系詞？",
+        options: ["reflect to", "reflect on", "reflect at", "reflect into"],
+        ans: 1,
+        explain: "reflect on sth. 表示「認真思考、沉思、反省某事」。"
+      },
+      {
+        q: "7. 句型填空：「To Dave's ______, he found that he was wearing his T-shirt inside out.」令Dave感到尷尬的是，他發現自己衣服穿反了。",
+        options: ["embarrass", "embarrassed", "embarrassing", "embarrassment"],
+        ans: 3,
+        explain: "「To one's embarrassment」為固定用法，介系詞後需接名詞 embarrassment。"
+      },
+      {
+        q: "8. 片語填空：「Paul was running out of time, so he ______ the last part of his talk.」Paul 時間不夠了，所以他略過了演講的最後一部分。",
+        options: ["skipped", "ruined", "yelled", "recalled"],
+        ans: 0,
+        explain: "skip 可當及物動詞，表示「略過；跳過」或「翹課 (skip class)」。"
+      },
+      {
+        q: "9. 「Fortunately, few people were hurt during the earthquake.」句中的 Fortunately 可以替換為下列何者？",
+        options: ["Luckily", "Accidentally", "Suddenly", "Traditional"],
+        ans: 0,
+        explain: "fortunately 與 luckily 皆為副詞，意為「幸運地」。"
+      },
+      {
+        q: "10. 「Ms. Chen reminded her students ______ the importance of checking their homework.」陳老師提醒學生檢查作業的重要性。",
+        options: ["for", "about", "of", "with"],
+        ans: 2,
+        explain: "remind sb. of sth. 為固定句型，表示「提醒某人某事；使某人想起某事」。"
+      }
+    ];
+
+    // 關卡 3 看中選英（5題單字 + 5題片語搭配詞）
+    const LEVEL3_QUESTIONS = [
+      // 5題單字
+      {
+        type: "單字",
+        zh: "意外地；不小心地 (adv.)",
+        correct: "accidentally",
+        options: ["accidentally", "traditionally", "fortunately", "seriously"],
+        detail: "accidentally (adv.) 意外地；by mistake"
+      },
+      {
+        type: "單字",
+        zh: "使難過；使沮喪 (vt.)",
+        correct: "upset",
+        options: ["upset", "recall", "reply", "reflect"],
+        detail: "upset (vt.) 使難過；三態為 upset-upset-upset"
+      },
+      {
+        type: "單字",
+        zh: "記起；回想起 (vt.)",
+        correct: "recall",
+        options: ["recall", "remind", "ruin", "skip"],
+        detail: "recall (vt.) 回想；記起 (to remember)"
+      },
+      {
+        type: "單字",
+        zh: "傳統的 (adj.)",
+        correct: "traditional",
+        options: ["traditional", "memorable", "embarrassed", "depressed"],
+        detail: "traditional (adj.) 傳統的；名詞為 tradition"
+      },
+      {
+        type: "單字",
+        zh: "破壞；毀壞 (vt.)",
+        correct: "ruin",
+        options: ["ruin", "yell", "present", "reply"],
+        detail: "ruin (vt.) 毀壞、糟蹋 (to spoil or destroy)"
+      },
+      // 5題搭配詞與片語
+      {
+        type: "片語搭配詞",
+        zh: "讓……失望 (片語)",
+        correct: "let down",
+        options: ["let down", "put first", "take seriously", "dress up"],
+        detail: "let sb. down 讓某人失望 (fail to meet someone's expectations)"
+      },
+      {
+        type: "片語搭配詞",
+        zh: "親自；當面 (片語)",
+        correct: "in person",
+        options: ["in person", "the rest of", "make sure", "from memory"],
+        detail: "in person 親自 (being physically present)"
+      },
+      {
+        type: "片語搭配詞",
+        zh: "認為……最重要；把……放第一位 (片語)",
+        correct: "put...first",
+        options: ["put...first", "take...seriously", "end in failure", "fall into ruin"],
+        detail: "put sth./sb. first 把……列為最優先"
+      },
+      {
+        type: "片語搭配詞",
+        zh: "淪為廢墟 (搭配詞)",
+        correct: "fall into ruin",
+        options: ["fall into ruin", "end in failure", "be in perfect condition", "bring back memories"],
+        detail: "fall into ruin 淪為廢墟、破敗"
+      },
+      {
+        type: "片語搭配詞",
+        zh: "以失敗告終 (搭配詞)",
+        correct: "end in failure",
+        options: ["end in failure", "skip to the end", "make a reply", "suffer from depression"],
+        detail: "end in failure 以失敗收場"
+      }
+    ];
+
+    /* ================= 2. Web Audio 原生音效合成器 ================= */
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playSound(type) {
+      if (!state.soundEnabled) return;
+      try {
+        initAudio();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, now);
+          osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        } else if (type === 'match') { // 配對成功音效
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now); // C5
+          osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+          osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'wrong') { // 錯誤音效
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(260, now);
+          osc.frequency.linearRampToValueAtTime(140, now + 0.25);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'win') { // 通關號角音效
+          const notes = [523.25, 659.25, 783.99, 1046.50];
+          notes.forEach((freq, idx) => {
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.connect(g);
+            g.connect(audioCtx.destination);
+            o.type = 'square';
+            o.frequency.setValueAtTime(freq, now + idx * 0.1);
+            g.gain.setValueAtTime(0.18, now + idx * 0.1);
+            g.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.1 + 0.25);
+            o.start(now + idx * 0.1);
+            o.stop(now + idx * 0.1 + 0.25);
+          });
+        }
+      } catch (e) {
+        console.warn("AudioContext error:", e);
+      }
+    }
+
+    function toggleSound() {
+      state.soundEnabled = !state.soundEnabled;
+      const btn = document.getElementById('audio-toggle');
+      if (state.soundEnabled) {
+        btn.textContent = '🔊';
+        btn.classList.replace('bg-zinc-200', 'bg-emerald-200');
+        playSound('click');
+      } else {
+        btn.textContent = '🔇';
+        btn.classList.replace('bg-emerald-200', 'bg-zinc-200');
+      }
+    }
+
+    /* ================= 3. 視圖切換與導航管理 ================= */
+    const views = ['hub', 'level-1', 'level-2', 'level-3', 'cert'];
+    
+    function showView(viewId) {
+      playSound('click');
+      // 停止關卡1計時器（若正在跑）
+      if (viewId !== 'level-1' && state.level1.timerId) {
+        clearInterval(state.level1.timerId);
+        state.level1.timerId = null;
+      }
+
+      views.forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        if (el) el.classList.add('hidden');
+      });
+
+      const target = document.getElementById(`view-${viewId}`);
+      if (target) {
+        target.classList.remove('hidden');
+        target.classList.add('flex');
+      }
+
+      // 更新頂部按鈕狀態
+      updateNavHighlight(viewId);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateNavHighlight(activeView) {
+      const mapping = {
+        'hub': 'btn-nav-hub',
+        'level-1': 'btn-nav-lvl1',
+        'level-2': 'btn-nav-lvl2',
+        'level-3': 'btn-nav-lvl3',
+        'cert': 'btn-nav-cert'
+      };
+      Object.keys(mapping).forEach(key => {
+        const btn = document.getElementById(mapping[key]);
+        if (!btn) return;
+        if (key === activeView) {
+          btn.classList.add('ring-2', 'ring-zinc-900', 'scale-105');
+        } else {
+          btn.classList.remove('ring-2', 'ring-zinc-900', 'scale-105');
+        }
+      });
+    }
+
+    function enterLevel(lvlNum) {
+      if (!state.student.isRegistered) {
+        showModal('請先登錄身份', '請先在大廳輸入班級、座號與姓名，讓成就完整記錄喔！', '好的，去填寫', () => {
+          showView('hub');
+          document.getElementById('input-class').focus();
+        });
+        return;
+      }
+
+      if (lvlNum === 1) {
+        showView('level-1');
+        initLevel1();
+      } else if (lvlNum === 2) {
+        showView('level-2');
+        initLevel2();
+      } else if (lvlNum === 3) {
+        showView('level-3');
+        initLevel3();
+      }
+    }
+
+    /* ================= 4. 學生資料管理 ================= */
+    function saveStudentInfo(e) {
+      e.preventDefault();
+      playSound('click');
+      const c = document.getElementById('input-class').value.trim();
+      const s = document.getElementById('input-seat').value.trim();
+      const n = document.getElementById('input-name').value.trim();
+
+      if (!c || !s || !n) return;
+
+      state.student.className = c;
+      state.student.seatNumber = s;
+      state.student.name = n;
+      state.student.isRegistered = true;
+
+      // 更新頂部資訊條
+      document.getElementById('nav-student-name').textContent = `${c}班 ${s}號 ${n}`;
+      document.getElementById('nav-student-pill').classList.remove('hidden');
+
+      // 更新大廳確認框
+      document.getElementById('student-form').classList.add('hidden');
+      document.getElementById('login-confirmed-box').classList.remove('hidden');
+      document.getElementById('display-registered-info').textContent = `${c} 班 ${s} 號 ${n}`;
+
+      // 同步到證書
+      updateCertInfo();
+
+      showModal('登錄成功 🚀', `哈囉 ${n}！歡迎挑戰 L01 單字大冒險，請點選下方卡片開始闖關吧！`, '開始挑戰！');
+    }
+
+    function editStudentInfo() {
+      document.getElementById('student-form').classList.remove('hidden');
+      document.getElementById('login-confirmed-box').classList.add('hidden');
+      document.getElementById('input-class').focus();
+    }
+
+    function updateCertInfo() {
+      document.getElementById('cert-class-display').textContent = state.student.className ? `${state.student.className} 班` : '未登記班級';
+      document.getElementById('cert-seat-display').textContent = state.student.seatNumber ? `${state.student.seatNumber} 號` : '-- 號';
+      document.getElementById('cert-name-display').textContent = state.student.name || '冒險者學員';
+      const today = new Date();
+      document.getElementById('cert-date').textContent = `${today.getFullYear()}/${String(today.getMonth() + 1).padStart(2, '0')}/${String(today.getDate()).padStart(2, '0')}`;
+    }
+
+    /* ================= 5. 徽章系統更新 ================= */
+    function unlockBadge(levelNum) {
+      state.badges[levelNum] = true;
+      playSound('win');
+
+      // 更新頂部槽
+      const icon = document.getElementById(`badge-icon-${levelNum}`);
+      if (icon) {
+        icon.classList.remove('grayscale', 'opacity-50', 'bg-zinc-100');
+        icon.classList.add('bg-dopa-yellow', 'border-zinc-900', 'animate-bounce');
+        setTimeout(() => icon.classList.remove('animate-bounce'), 1000);
+      }
+
+      // 更新大廳標籤
+      const statusLabel = document.getElementById(`hub-badge-status-${levelNum}`);
+      if (statusLabel) {
+        statusLabel.textContent = '已通關 ⚡';
+        statusLabel.classList.add('bg-emerald-400', 'text-zinc-900');
+      }
+
+      // 計數
+      const totalUnlocked = Object.values(state.badges).filter(Boolean).length;
+      document.getElementById('hub-badges-count').textContent = `已收集：${totalUnlocked} / 3 徽章`;
+
+      // 檢查是否集滿 3 個
+      if (totalUnlocked === 3) {
+        setTimeout(() => {
+          showModal('🎉 太神了！三關全數通關！', '你已成功集滿 3 枚多巴胺徽章！專屬榮譽證書已解鎖，現在就前往領取吧！', '領取證書 🏆', () => {
+            showView('cert');
+          });
+        }, 800);
+      }
+    }
+
+    /* ================= 6. 關卡一：4×4 閃電連連看 (50秒、配對變綠色) ================= */
+    function initLevel1() {
+      state.level1.currentRound = 1;
+      startRoundLevel1(1);
+    }
+
+    function restartLevel1() {
+      playSound('click');
+      startRoundLevel1(state.level1.currentRound);
+    }
+
+    function startRoundLevel1(roundNum) {
+      if (state.level1.timerId) clearInterval(state.level1.timerId);
+
+      state.level1.currentRound = roundNum;
+      state.level1.timeLeft = 50; // 改為 50 秒
+      state.level1.firstCard = null;
+      state.level1.lockBoard = false;
+      state.level1.matchedPairs = 0;
+
+      document.getElementById('game1-round').textContent = roundNum;
+      document.getElementById('game1-timer').textContent = `${state.level1.timeLeft} 秒`;
+      document.getElementById('game1-timer').classList.remove('text-red-500', 'animate-pulse');
+      document.getElementById('game1-matched-counter').textContent = `配對進度: 0 / 8 對`;
+
+      const progressBar = document.getElementById('game1-progress-bar');
+      progressBar.style.width = '100%';
+      progressBar.classList.remove('bg-rose-500');
+      progressBar.classList.add('bg-dopa-pink');
+
+      buildLevel1Grid(roundNum);
+      startLevel1Timer();
+    }
+
+    function buildLevel1Grid(roundNum) {
+      const pairData = MATCH_ROUNDS[roundNum - 1];
+      const grid = document.getElementById('game1-grid');
+      grid.innerHTML = '';
+
+      // 建立 16 張卡片（8 英文 + 8 中文）
+      const cards = [];
+      pairData.forEach((item, idx) => {
+        cards.push({
+          id: `card-${idx}-en`,
+          pairKey: idx,
+          type: 'en',
+          text: item.en
+        });
+        cards.push({
+          id: `card-${idx}-zh`,
+          pairKey: idx,
+          type: 'zh',
+          text: item.zh
+        });
+      });
+
+      // 洗牌
+      cards.sort(() => Math.random() - 0.5);
+
+      cards.forEach(c => {
+        const btn = document.createElement('button');
+        btn.id = c.id;
+        btn.dataset.pairKey = c.pairKey;
+        btn.dataset.type = c.type;
+        btn.dataset.text = c.text;
+
+        // 手機尺寸友善：使用 flex 置中、緊湊 padding、邊框立體陰影
+        btn.className = `card-item w-full h-full neo-card bg-white rounded-xl sm:rounded-2xl p-1 sm:p-2 
+                         flex flex-col items-center justify-center text-center select-none 
+                         cursor-pointer active:scale-95 transition-all duration-150`;
+
+        // 針對中英文字串微調文字大小
+        const isLongText = c.text.length > 6;
+        btn.innerHTML = `
+          <span class="card-text font-black ${isLongText ? 'text-[11px] sm:text-xs' : 'text-xs sm:text-sm'} leading-tight text-zinc-900 break-words px-0.5">
+            ${c.text}
+          </span>
+        `;
+
+        btn.onclick = () => onCardClick(btn);
+        grid.appendChild(btn);
+      });
+    }
+
+    function startLevel1Timer() {
+      const progressBar = document.getElementById('game1-progress-bar');
+      const timerEl = document.getElementById('game1-timer');
+
+      state.level1.timerId = setInterval(() => {
+        state.level1.timeLeft--;
+        timerEl.textContent = `${state.level1.timeLeft} 秒`;
+
+        // 更新進度條 (基於 50 秒)
+        const pct = (state.level1.timeLeft / 50) * 100;
+        progressBar.style.width = `${Math.max(0, pct)}%`;
+
+        // 最後 10 秒警示
+        if (state.level1.timeLeft <= 10) {
+          timerEl.classList.add('text-red-500', 'animate-pulse');
+          progressBar.classList.remove('bg-dopa-pink');
+          progressBar.classList.add('bg-rose-500');
+        }
+
+        // 時間到
+        if (state.level1.timeLeft <= 0) {
+          clearInterval(state.level1.timerId);
+          state.level1.timerId = null;
+          playSound('wrong');
+          showModal('⏰ 時間到！', `第 ${state.level1.currentRound} 回合未在 50 秒內完成，別氣餒，再試一次吧！`, '重新挑戰本回合', () => {
+            startRoundLevel1(state.level1.currentRound);
+          });
+        }
+      }, 1000);
+    }
+
+    function onCardClick(btn) {
+      if (state.level1.lockBoard) return;
+      if (btn.classList.contains('matched')) return; // 已配對成功變綠色的卡片不可再點
+      if (btn === state.level1.firstCard) return; // 點擊同一張卡片略過
+
+      playSound('click');
+
+      // 選取高亮樣式
+      btn.classList.remove('bg-white');
+      btn.classList.add('bg-amber-200', 'border-amber-600', 'ring-2', 'ring-amber-400');
+
+      if (!state.level1.firstCard) {
+        state.level1.firstCard = btn;
+        return;
+      }
+
+      // 第二張卡片點擊
+      const card1 = state.level1.firstCard;
+      const card2 = btn;
+      state.level1.lockBoard = true;
+
+      const isMatch = card1.dataset.pairKey === card2.dataset.pairKey;
+
+      if (isMatch) {
+        // ========== 配對成功！兩張卡片均變為鮮豔亮綠色 ==========
+        playSound('match');
+        card1.classList.remove('bg-amber-200', 'border-amber-600', 'ring-2', 'ring-amber-400', 'bg-white');
+        card2.classList.remove('bg-amber-200', 'border-amber-600', 'ring-2', 'ring-amber-400', 'bg-white');
+
+        // 加上綠色標籤與標記 (emerald/green)
+        [card1, card2].forEach(card => {
+          card.classList.add(
+            'bg-emerald-300', 
+            'border-emerald-700', 
+            'text-emerald-950', 
+            'ring-2', 
+            'ring-emerald-400', 
+            'matched', 
+            'animate-success'
+          );
+          card.style.transform = 'translateY(1px)';
+          // 在文字旁加小打勾更易辨識
+          const txtSpan = card.querySelector('.card-text');
+          if (txtSpan && !txtSpan.innerHTML.includes('✓')) {
+            txtSpan.innerHTML = `✓ ${txtSpan.innerHTML}`;
+          }
+        });
+
+        state.level1.matchedPairs++;
+        document.getElementById('game1-matched-counter').textContent = `配對進度: ${state.level1.matchedPairs} / 8 對`;
+
+        state.level1.firstCard = null;
+        state.level1.lockBoard = false;
+
+        // 回合過關檢查
+        if (state.level1.matchedPairs === state.level1.totalPairs) {
+          clearInterval(state.level1.timerId);
+          playSound('win');
+
+          if (state.level1.currentRound < 3) {
+            setTimeout(() => {
+              showModal(
+                `🎉 Round ${state.level1.currentRound} 通關！`, 
+                `太厲害了！50秒內順利配對全部單字！準備好迎接下一回合了嗎？`, 
+                `進入 Round ${state.level1.currentRound + 1} ➔`, 
+                () => {
+                  startRoundLevel1(state.level1.currentRound + 1);
+                }
+              );
+            }, 500);
+          } else {
+            // 三回合全數過關，解鎖徽章
+            unlockBadge(1);
+            setTimeout(() => {
+              showModal(
+                '⚡ 恭喜獲得【閃電記憶王】徽章！', 
+                '三回合 4×4 矩陣消消樂挑戰全數過關！你的單字記憶神速！', 
+                '回大廳挑選下一關 🗺️', 
+                () => {
+                  showView('hub');
+                }
+              );
+            }, 500);
+          }
+        }
+      } else {
+        // 配對失敗：抖動 + 提示紅色，隨後翻回白色
+        playSound('wrong');
+        card1.classList.add('bg-rose-200', 'border-rose-500', 'animate-shake');
+        card2.classList.add('bg-rose-200', 'border-rose-500', 'animate-shake');
+
+        setTimeout(() => {
+          [card1, card2].forEach(card => {
+            card.classList.remove(
+              'bg-amber-200', 'border-amber-600', 'ring-2', 'ring-amber-400',
+              'bg-rose-200', 'border-rose-500', 'animate-shake'
+            );
+            card.classList.add('bg-white');
+          });
+          state.level1.firstCard = null;
+          state.level1.lockBoard = false;
+        }, 600);
+      }
+    }
+
+    /* ================= 7. 關卡二：衍生字與搭配詞大偵探 (10題) ================= */
+    function initLevel2() {
+      state.level2.currentIndex = 0;
+      state.level2.score = 0;
+      renderQuestionLevel2();
+    }
+
+    function renderQuestionLevel2() {
+      state.level2.answered = false;
+      const q = LEVEL2_QUESTIONS[state.level2.currentIndex];
+
+      document.getElementById('q2-current-num').textContent = state.level2.currentIndex + 1;
+      document.getElementById('q2-score').textContent = state.level2.score;
+      document.getElementById('q2-question-text').textContent = q.q;
+
+      const feedbackBox = document.getElementById('q2-feedback-box');
+      feedbackBox.classList.add('hidden');
+
+      const container = document.getElementById('q2-options-container');
+      container.innerHTML = '';
+
+      // 產生選項
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `w-full text-left p-2.5 sm:p-3 rounded-2xl border-2 border-zinc-900 bg-white hover:bg-purple-50 
+                         font-bold text-xs sm:text-sm text-zinc-800 transition-all flex items-center justify-between group shadow-neo-sm`;
+        btn.innerHTML = `
+          <span>${optText}</span>
+          <span class="w-6 h-6 rounded-full border border-zinc-400 flex items-center justify-center text-xs group-hover:border-zinc-900">
+            ${['A','B','C','D'][idx]}
+          </span>
+        `;
+        btn.onclick = () => onSelectLevel2Option(btn, idx, q.ans, q.explain);
+        container.appendChild(btn);
+      });
+    }
+
+    function onSelectLevel2Option(selectedBtn, selectedIdx, correctIdx, explain) {
+      if (state.level2.answered) return;
+      state.level2.answered = true;
+
+      const container = document.getElementById('q2-options-container');
+      const allButtons = container.querySelectorAll('button');
+
+      const feedbackBox = document.getElementById('q2-feedback-box');
+      const feedbackTitle = document.getElementById('q2-feedback-title');
+      const feedbackDetail = document.getElementById('q2-feedback-detail');
+
+      if (selectedIdx === correctIdx) {
+        playSound('match');
+        state.level2.score++;
+        document.getElementById('q2-score').textContent = state.level2.score;
+
+        selectedBtn.classList.remove('bg-white');
+        selectedBtn.classList.add('bg-emerald-300', 'border-emerald-700', 'text-emerald-950');
+
+        feedbackBox.className = 'mt-3 p-3 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-xs font-bold';
+        feedbackTitle.innerHTML = '🎉 答對了！太棒了！';
+        feedbackTitle.className = 'font-black text-sm mb-1 text-emerald-800';
+      } else {
+        playSound('wrong');
+        selectedBtn.classList.remove('bg-white');
+        selectedBtn.classList.add('bg-rose-200', 'border-rose-600', 'text-rose-950');
+
+        // 標示正確選項
+        if (allButtons[correctIdx]) {
+          allButtons[correctIdx].classList.remove('bg-white');
+          allButtons[correctIdx].classList.add('bg-emerald-200', 'border-emerald-600');
+        }
+
+        feedbackBox.className = 'mt-3 p-3 rounded-xl border-2 border-rose-600 bg-rose-50 text-xs font-bold';
+        feedbackTitle.innerHTML = '💡 差一點點！解析如下：';
+        feedbackTitle.className = 'font-black text-sm mb-1 text-rose-800';
+      }
+
+      feedbackDetail.textContent = explain;
+      feedbackBox.classList.remove('hidden');
+
+      // 更新下一題按鈕文字
+      const nextBtn = document.getElementById('q2-next-btn');
+      if (state.level2.currentIndex === LEVEL2_QUESTIONS.length - 1) {
+        nextBtn.textContent = '看結算成績 ➔';
+      } else {
+        nextBtn.textContent = '下一題 ➔';
+      }
+    }
+
+    function nextQuestionLevel2() {
+      playSound('click');
+      if (state.level2.currentIndex < LEVEL2_QUESTIONS.length - 1) {
+        state.level2.currentIndex++;
+        renderQuestionLevel2();
+      } else {
+        // 結算
+        const score = state.level2.score;
+        if (score >= 8) {
+          unlockBadge(2);
+          showModal(
+            '💡 恭喜獲得【搭配詞大偵探】徽章！', 
+            `10 題中答對 ${score} 題（標準為 8 題），你對本課的衍生字與搭配詞掌握度極佳！`, 
+            '回大廳挑選下一關 🗺️', 
+            () => showView('hub')
+          );
+        } else {
+          showModal(
+            '加油！再挑戰一次！', 
+            `你獲得了 ${score} / 10 分（獲得徽章需達 8 分）。再看一次解析，相信你一定能拿到徽章！`, 
+            '重新挑戰本關', 
+            () => initLevel2()
+          );
+        }
+      }
+    }
+
+    /* ================= 8. 關卡三：看中選英 (10題 4選1) ================= */
+    function initLevel3() {
+      state.level3.currentIndex = 0;
+      state.level3.score = 0;
+      renderQuestionLevel3();
+    }
+
+    function renderQuestionLevel3() {
+      state.level3.answered = false;
+      const q = LEVEL3_QUESTIONS[state.level3.currentIndex];
+
+      document.getElementById('q3-current-num').textContent = state.level3.currentIndex + 1;
+      document.getElementById('q3-score').textContent = state.level3.score;
+      document.getElementById('q3-type-tag').textContent = q.type;
+      document.getElementById('q3-prompt-text').textContent = q.zh;
+
+      const feedbackBox = document.getElementById('q3-feedback-box');
+      feedbackBox.classList.add('hidden');
+
+      const container = document.getElementById('q3-options-container');
+      container.innerHTML = '';
+
+      // 隨機洗牌選項
+      const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+
+      shuffledOptions.forEach((opt) => {
+        const btn = document.createElement('button');
+        btn.className = `w-full p-3 rounded-2xl border-2 border-zinc-900 bg-white hover:bg-pink-50 
+                         font-black text-sm text-zinc-800 transition-all text-center shadow-neo-sm active:scale-95`;
+        btn.textContent = opt;
+        btn.onclick = () => onSelectLevel3Option(btn, opt, q.correct, q.detail);
+        container.appendChild(btn);
+      });
+    }
+
+    function onSelectLevel3Option(btn, chosen, correct, detail) {
+      if (state.level3.answered) return;
+      state.level3.answered = true;
+
+      const container = document.getElementById('q3-options-container');
+      const allButtons = container.querySelectorAll('button');
+
+      const feedbackBox = document.getElementById('q3-feedback-box');
+      const feedbackTitle = document.getElementById('q3-feedback-title');
+      const feedbackDetail = document.getElementById('q3-feedback-detail');
+
+      if (chosen === correct) {
+        playSound('match');
+        state.level3.score++;
+        document.getElementById('q3-score').textContent = state.level3.score;
+
+        btn.classList.remove('bg-white');
+        btn.classList.add('bg-emerald-300', 'border-emerald-700', 'text-emerald-950');
+
+        feedbackBox.className = 'mt-3 p-3 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-xs font-bold';
+        feedbackTitle.innerHTML = '🎯 命中正確答案！';
+        feedbackTitle.className = 'font-black text-sm mb-1 text-emerald-800';
+      } else {
+        playSound('wrong');
+        btn.classList.remove('bg-white');
+        btn.classList.add('bg-rose-200', 'border-rose-600', 'text-rose-950');
+
+        allButtons.forEach(b => {
+          if (b.textContent === correct) {
+            b.classList.remove('bg-white');
+            b.classList.add('bg-emerald-200', 'border-emerald-600');
+          }
+        });
+
+        feedbackBox.className = 'mt-3 p-3 rounded-xl border-2 border-rose-600 bg-rose-50 text-xs font-bold';
+        feedbackTitle.innerHTML = '❌ 選錯囉！正確答案是：' + correct;
+        feedbackTitle.className = 'font-black text-sm mb-1 text-rose-800';
+      }
+
+      feedbackDetail.textContent = detail;
+      feedbackBox.classList.remove('hidden');
+
+      const nextBtn = document.getElementById('q3-next-btn');
+      if (state.level3.currentIndex === LEVEL3_QUESTIONS.length - 1) {
+        nextBtn.textContent = '看結算成績 ➔';
+      } else {
+        nextBtn.textContent = '下一題 ➔';
+      }
+    }
+
+    function nextQuestionLevel3() {
+      playSound('click');
+      if (state.level3.currentIndex < LEVEL3_QUESTIONS.length - 1) {
+        state.level3.currentIndex++;
+        renderQuestionLevel3();
+      } else {
+        // 結算
+        const score = state.level3.score;
+        if (score >= 8) {
+          unlockBadge(3);
+          showModal(
+            '🎯 恭喜獲得【中英轉換霸主】徽章！', 
+            `10 題中答對 ${score} 題！中英對應迅速且精準！`, 
+            '回大廳查看證書 🏆', 
+            () => showView('cert')
+          );
+        } else {
+          showModal(
+            '再接再厲！', 
+            `本次答對 ${score} / 10 題（獲得徽章需達 8 題）。再複習一下單字與片語吧！`, 
+            '重新挑戰本關', 
+            () => initLevel3()
+          );
+        }
+      }
+    }
+
+    /* ================= 9. 通用模態彈窗 (Modal) ================= */
+    function showModal(title, desc, btnText, onConfirm) {
+      const modal = document.getElementById('game-modal');
+      const titleEl = document.getElementById('modal-title');
+      const descEl = document.getElementById('modal-desc');
+      const primaryBtn = document.getElementById('modal-primary-btn');
+      const secondaryBtn = document.getElementById('modal-secondary-btn');
+
+      titleEl.textContent = title;
+      descEl.textContent = desc;
+      primaryBtn.textContent = btnText || '確認';
+
+      primaryBtn.onclick = () => {
+        playSound('click');
+        modal.classList.add('hidden');
+        if (onConfirm) onConfirm();
+      };
+
+      secondaryBtn.onclick = () => {
+        playSound('click');
+        modal.classList.add('hidden');
+      };
+
+      modal.classList.remove('hidden');
+    }
+
+    /* ================= 10. 初始化載入 ================= */
+    window.addEventListener('DOMContentLoaded', () => {
+      showView('hub');
+      updateCertInfo();
+    });
+  </script>
+</body>
+</html>
